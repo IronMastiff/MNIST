@@ -59,12 +59,12 @@ def create_placeholeers( n_x, n_y ):
 
 def initialize_parameters():
     tf.set_random_seed( 1 )
-    W1 = tf.get_variable( "W1", [30, 784], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
-    b1 = tf.get_variable( "b1", [30, 1], initializer = tf.zeros_initializer() )
-    W2 = tf.get_variable( "W2", [15, 30], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
-    b2 = tf.get_variable( "b2", [15, 1], initializer = tf.zeros_initializer() )
-    W3 = tf.get_variable( "W3", [7, 15], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
-    b3 = tf.get_variable( "b3", [7, 1], initializer = tf.zeros_initializer() )
+    W1 = tf.get_variable( "W1", [40, 784], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    b1 = tf.get_variable( "b1", [40, 1], initializer = tf.zeros_initializer() )
+    W2 = tf.get_variable( "W2", [20, 40], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    b2 = tf.get_variable( "b2", [20, 1], initializer = tf.zeros_initializer() )
+    W3 = tf.get_variable( "W3", [10, 20], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    b3 = tf.get_variable( "b3", [10, 1], initializer = tf.zeros_initializer() )
 
     parameters = {"W1" : W1,
                   "b1" : b1,
@@ -99,8 +99,8 @@ def compute_cost( Z3, Y ):
 
     return cost
 
-def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs = 1500, minibatch_size = 32, print_cost = True ):
-    ops.rest_default_graph()
+def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs = 1000, minibatch_size = 32, print_cost = True ):
+    ops.reset_default_graph()
     ( n_x, m ) = train_X.shape
     n_y = train_Y.shape[0]
     costs = []
@@ -123,8 +123,7 @@ def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs 
         for epoch in range( num_epochs ):
             epoch_cost = 0
             num_minibatches = int( m / minibatch_size )
-            seed = seed + 1
-            minibatches = random_mini_batches( train_X, train_Y, minibatch_size, seed )
+            minibatches = random_mini_batches( train_X, train_Y, minibatch_size )
 
             for minibatch in minibatches:
                 ( minibatch_X, minibatch_Y ) = minibatch
@@ -138,7 +137,7 @@ def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs 
                 costs.append( epoch_cost )
 
 
-        plt.plot( np.squeeze*( costs ) )
+        plt.plot( np.squeeze( costs ) )
         plt.ylabel( "cost" )
         plt.xlabel( "iteration ( per tens)" )
         plt.title( "Learning rate = " + str( learning_rate ) )
@@ -158,27 +157,27 @@ def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs 
 
 
 
-def random_mini_batches( X, Y, mini_batch_size, seed ):
+def random_mini_batches( X, Y, mini_batch_size ):
     m = X.shape[1]
     mini_batches = []
 
     # Step 1: Shuffle ( X, Y )
     permutation = list( np.random.permutation( m ) )
     shuffled_X = X[:, permutation]
-    shuffled_Y = Y[:, permutation].reshape( ( 1, m ) )
+    shuffled_Y = Y[:, permutation]
 
     # Step 2: Partition ( shuffed_X, shuffed_Y ), Minus the end case
-    num_complete_minibatches = math.floor( m / mini_batches_size )
+    num_complete_minibatches = math.floor( m / mini_batch_size )
     for k in range( 0, num_complete_minibatches ):
-        mini_batch_X = shuffed_X[:, k * mini_batch_size : mini_batch_size * ( k + 1 )]
-        mini_batch_Y = shuffed_Y[:, k * mini_batch_size : mini_batch_size * ( k + 1 )]
+        mini_batch_X = shuffled_X[:, k * mini_batch_size : mini_batch_size * ( k + 1 )]
+        mini_batch_Y = shuffled_Y[:, k * mini_batch_size : mini_batch_size * ( k + 1 )]
         mini_batch = ( mini_batch_X, mini_batch_Y )
         mini_batches.append( mini_batch )
 
     # Handing the end case ( last mini_batch < mini_batch_size )
     if m % mini_batch_size != 0:
-        mini_batch_X = shuffed_X[:, mini_batch_size * num_complete_minibatches : m]
-        mini_batch_Y = shuffed_Y[:, mini_batch_size * num_complete_minibatches : m]
+        mini_batch_X = shuffled_X[:, mini_batch_size * num_complete_minibatches : m]
+        mini_batch_Y = shuffled_Y[:, mini_batch_size * num_complete_minibatches : m]
 
         mini_batch = ( mini_batch_X, mini_batch_Y )
         mini_batches.append( mini_batch )

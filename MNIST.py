@@ -1,11 +1,8 @@
-import math
-import numpy as np
-import h5py
-import matplotlib.pyplot as plt
-from tensorflow.python.framework import ops
+from Util import  fit_data, model
 
-import Util
-import LoadData
-mnist = LoadData.read_data_sets( "MNIST_data/", one_hot=True )
+train_X, train_Y, test_X, test_Y = fit_data()
+model( train_X, train_Y, test_X, test_Y )
+
+
 
 
