@@ -23,19 +23,21 @@ def main():
 
 def data_test():
     # Loading the dataset
-    train_X, train_Y, test_X, test_Y = main()
+    train_X, train_Y, test_X, test_Y = fit_data()
     print(train_X.shape, train_Y.shape, test_X.shape, test_Y.shape)
 
     index = 0
-    image = train_X[index]
-    print(image.shape)
+    image = train_X[:, index]
+    print( image.shape )
 
     image = image.reshape(28, -1)
-    print(image.shape)
+    print( image.shape )
 
-    plt.imshow(image)
+    plt.imshow( image )
     plt.show()
-    print("Y = " + str(np.squeeze(train_Y[index,])))
+    print( "Y = " + str( np.squeeze( train_Y[:, index] ) ) )
+    print( "Y = " + str( np.argmax( train_Y[:, index] ) ) )
+
 
 def fit_data():
     train_X, train_Y, test_X, test_Y = main()
@@ -53,17 +55,18 @@ def one_hot_matrix( labels, C ):
     return one_hot
 
 def create_placeholeers( n_x, n_y ):
+
     X = tf.placeholder( tf.float32, [n_x, None] )
     Y = tf.placeholder( tf.float32, [n_y, None] )
     return X, Y
 
 def initialize_parameters():
-    tf.set_random_seed( 1 )
-    W1 = tf.get_variable( "W1", [40, 784], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    # tf.set_random_seed( 1 )
+    W1 = tf.get_variable( "W1", [40, 784], initializer = tf.contrib.layers.xavier_initializer() )
     b1 = tf.get_variable( "b1", [40, 1], initializer = tf.zeros_initializer() )
-    W2 = tf.get_variable( "W2", [20, 40], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    W2 = tf.get_variable( "W2", [20, 40], initializer = tf.contrib.layers.xavier_initializer() )
     b2 = tf.get_variable( "b2", [20, 1], initializer = tf.zeros_initializer() )
-    W3 = tf.get_variable( "W3", [10, 20], initializer = tf.contrib.layers.xavier_initializer( seed = 1 ) )
+    W3 = tf.get_variable( "W3", [10, 20], initializer = tf.contrib.layers.xavier_initializer() )
     b3 = tf.get_variable( "b3", [10, 1], initializer = tf.zeros_initializer() )
 
     parameters = {"W1" : W1,
@@ -183,3 +186,30 @@ def random_mini_batches( X, Y, mini_batch_size ):
         mini_batches.append( mini_batch )
 
     return mini_batches
+
+
+def predict( parameters, X, index ):
+    n_x, n_y = create_placeholeers( X.shape[0], 0 )
+    feed_dict = {n_x : X[:, index]}
+    Z3 = forward_propagation( n_x, parameters )
+    perdictions = ( np.argmax( Z3 ) )
+
+    print ( "Machine:" + str( perdictions ) )
+    return perdictions
+
+def print_iamge( X, Y, index ):
+    image = X[:, index]
+
+    image = image.reshape( 28, -1 )
+
+    plt.imshow(image)
+    plt.show()
+    print("Y = " + str( np.argmax( Y[:, index] ) ) )
+
+# init = tf.global_variables_initializer()
+# sess.run(init)
+# train_X, train_Y, test_X, test_Y = fit_data()
+# predict( initialize_parameters(), test_X, 0 )
+# print_iamge( test_X, test_Y, 6 )
+
+
