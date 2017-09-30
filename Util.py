@@ -155,6 +155,7 @@ def model( train_X, train_Y, test_X, test_Y, learning_rate = 0.0001, num_epochs 
 
         print( "Train Accuracy:", accuracy.eval( {X : train_X, Y : train_Y} ) )
         print( "Test Accuracy:", accuracy.eval( {X : test_X, Y : test_Y} ) )
+        sess.close()
 
         return parameters
 
@@ -188,14 +189,13 @@ def random_mini_batches( X, Y, mini_batch_size ):
     return mini_batches
 
 
-def predict( parameters, X, index ):
-    n_x, n_y = create_placeholeers( X.shape[0], 0 )
-    feed_dict = {n_x : X[:, index]}
-    Z3 = forward_propagation( n_x, parameters )
-    perdictions = ( np.argmax( Z3 ) )
+def predict( parameters, X1, index ):
+    X, Y = create_placeholeers(X1.shape[0], 0)
+    Z3 = forward_propagation(X, parameters)
+    perdictions = tf.argmax(Z3[:, index])
+    with tf.Session() as sess:
+        print("Machine:", perdictions.eval( {X : X1} ) )
 
-    print ( "Machine:" + str( perdictions ) )
-    return perdictions
 
 def print_iamge( X, Y, index ):
     image = X[:, index]
