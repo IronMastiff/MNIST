@@ -9,10 +9,10 @@ from LoadData import DataUtils
 sess = tf.InteractiveSession()
 
 def main():
-    trainFile_x = 'D:/PycharmProjects/MNIST/MNIST_data/train-images.idx3-ubyte'
-    trainFile_y = 'D:/PycharmProjects/MNIST/MNIST_data/train-labels.idx1-ubyte'
-    testFile_x = 'D:/PycharmProjects/MNIST/MNIST_data/t10k-images.idx3-ubyte'
-    testFile_y = 'D:/PycharmProjects/MNIST/MNIST_data/t10k-labels.idx1-ubyte'
+    trainFile_x = './MNIST_data/train-images.idx3-ubyte'
+    trainFile_y = './MNIST_data/train-labels.idx1-ubyte'
+    testFile_x = './MNIST_data/t10k-images.idx3-ubyte'
+    testFile_y = './MNIST/MNIST_data/t10k-labels.idx1-ubyte'
 
     train_X = DataUtils( fileName = trainFile_x ).getImage()
     train_Y = DataUtils( fileName = trainFile_y ).getLabel()
